@@ -5,14 +5,13 @@ import java.util.concurrent.CyclicBarrier;
 public class LottoGenerator {
 
     private CyclicBarrier cyclicBarrier;
-    private List<List<Integer>> partialResults = Collections.synchronizedList(new ArrayList<>());
-    private boolean allLottoNumbersAreEqual;
+    private List<TreeSet<Integer>> partialResults = Collections.synchronizedList(new ArrayList<>());
     final static int numberOfThreads = 2;
     private static int cycleCounter = 0;
 
     private void runThreads(int numberOfWorkers) {
         cyclicBarrier = new CyclicBarrier(numberOfWorkers, new ValidatorThread());
-        System.out.println("Creating " + numberOfWorkers + " worker threads to generate lotto numbers");
+        //System.out.println("Creating " + numberOfWorkers + " worker threads to generate lotto numbers");
         for (int i = 0; i < numberOfWorkers; i++) {
             Thread worker = new Thread(new NumberGeneratorThread());
             worker.setName("Thread " + i);
@@ -20,72 +19,65 @@ public class LottoGenerator {
         }
     }
 
-
     class NumberGeneratorThread implements Runnable {
 
         @Override
         public void run() {
             String thisThreadName =  Thread.currentThread().getName();
-            List<Integer> partialResult = new ArrayList<>();
+            TreeSet<Integer> partialResult = new TreeSet<>();
 
             partialResult = generateLottoNumbers();
             partialResults.add(partialResult);
 
             try {
-                System.out.println(thisThreadName + " waiting for other threads to reach barrier.");
+                //System.out.println(thisThreadName + " waiting for other threads to reach barrier.");
                 cyclicBarrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
         }
+
+        private TreeSet<Integer> generateLottoNumbers() {
+            TreeSet<Integer> listWithGeneratedLottoNumbers = new TreeSet<>();
+            Random rn = new Random();
+
+            while (listWithGeneratedLottoNumbers.size() < 2) {
+                int randomNumberBetween1And49 = rn.nextInt(48) + 1;
+                listWithGeneratedLottoNumbers.add(randomNumberBetween1And49);
+            }
+            return listWithGeneratedLottoNumbers;
+        }
     }
 
     class ValidatorThread implements Runnable {
+
+
+        private boolean allLottoNumbersAreEqual;
         @Override
         public void run() {
             String thisThreadName =  Thread.currentThread().getName();
-            System.out.println(thisThreadName + " : Analysing and printing generated numbers");
+            //System.out.println(thisThreadName + " : Analysing and printing generated numbers");
 
-            partialResults.stream().forEach(System.out::println);
-
-            allLottoNumbersAreEqual = partialResults.stream().allMatch(element -> element.contains(partialResults.get(0)));
-
-            System.out.println("Cycle counter: " + cycleCounter++ + System.lineSeparator());
-
+            allLottoNumbersAreEqual = partialResults.stream().allMatch(element -> element.equals(partialResults.get(0)));
             System.out.println("All numbers are equal: " + allLottoNumbersAreEqual);
+            System.out.println("Cycle counter: " + cycleCounter++ + System.lineSeparator());
 
             if (!allLottoNumbersAreEqual) {
                 LottoGenerator run = new LottoGenerator();
                 run.runThreads(numberOfThreads);
             }
 
-        }
-    }
-
-    private List<Integer> generateLottoNumbers() {
-        List<Integer> listWithGeneratedLottoNumbers = new ArrayList<>();
-        Random rn = new Random();
-
-        while (listWithGeneratedLottoNumbers.size() < 7) {
-            int randomNumberBetween1And49 = rn.nextInt(49);
-            if (randomNumberBetween1And49 <= 0) {
-                randomNumberBetween1And49 = 1;
+            if (allLottoNumbersAreEqual) {
+                System.out.println("Match found:");
+                partialResults.stream().forEach(System.out::println);
             }
 
-            if (!listWithGeneratedLottoNumbers.contains(randomNumberBetween1And49)) {
-                listWithGeneratedLottoNumbers.add(randomNumberBetween1And49);
-            }
+
         }
-
-        listWithGeneratedLottoNumbers.sort(Comparator.naturalOrder());
-
-        return listWithGeneratedLottoNumbers;
     }
 
     public static void main(String[] args) {
         LottoGenerator run = new LottoGenerator();
         run.runThreads(numberOfThreads);
-
     }
-
 }
