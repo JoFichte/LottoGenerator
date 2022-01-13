@@ -42,7 +42,7 @@ public class LottoGenerator {
             Random rn = new Random();
 
             while (listWithGeneratedLottoNumbers.size() < 2) {
-                int randomNumberBetween1And49 = rn.nextInt(48) + 1;
+                int randomNumberBetween1And49 = rn.nextInt(49) + 1;
                 listWithGeneratedLottoNumbers.add(randomNumberBetween1And49);
             }
             return listWithGeneratedLottoNumbers;
@@ -50,7 +50,6 @@ public class LottoGenerator {
     }
 
     class ValidatorThread implements Runnable {
-
 
         private boolean allLottoNumbersAreEqual;
         @Override
@@ -71,8 +70,6 @@ public class LottoGenerator {
                 System.out.println("Match found:");
                 partialResults.stream().forEach(System.out::println);
             }
-
-
         }
     }
 
