@@ -6,7 +6,6 @@ public class LottoGenerator {
 
     private CyclicBarrier cyclicBarrier;
     private List<TreeSet<Integer>> partialResults = Collections.synchronizedList(new ArrayList<>());
-    final static int numberOfThreads = 2;
     private static int cycleCounter = 0;
 
     private void runThreads(int numberOfWorkers) {
@@ -63,7 +62,7 @@ public class LottoGenerator {
 
             if (!allLottoNumbersAreEqual) {
                 LottoGenerator run = new LottoGenerator();
-                run.runThreads(numberOfThreads);
+                run.runThreads(Integer.parseInt(System.getenv("NUMBER_OF_THREADS")));
             }
 
             if (allLottoNumbersAreEqual) {
@@ -75,6 +74,6 @@ public class LottoGenerator {
 
     public static void main(String[] args) {
         LottoGenerator run = new LottoGenerator();
-        run.runThreads(numberOfThreads);
+        run.runThreads(Integer.parseInt(System.getenv("NUMBER_OF_THREADS")));
     }
 }
