@@ -9,11 +9,11 @@ public class Application {
         Validator validator = new Validator();
 
         do {
-            lottoTickets = lottoTicketGenerator.lottoTicketsGenerator(Integer.parseInt(System.getenv("NUMBER_OF_THREADS")));
+            lottoTickets = lottoTicketGenerator.generator(Integer.parseInt(System.getenv("NUMBER_OF_THREADS")));
         }
         while (!validator.allLottoTicketsAreEqual(lottoTickets));
 
-        System.out.println("All lotto tickets are equal: " + validator.allLottoTicketsAreEqual(lottoTickets));
+        System.out.println("All lotto tickets are equal!");
 
         lottoTickets.forEach(System.out::println);
 

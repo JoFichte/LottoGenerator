@@ -6,7 +6,7 @@ import java.util.concurrent.*;
 public class LottoTicketGenerator {
 
 
-    public List<TreeSet<Integer>> lottoTicketsGenerator(Integer numberOfTasks) throws InterruptedException{
+    public List<TreeSet<Integer>> generator(Integer numberOfTasks) throws InterruptedException{
 
         ExecutorService executor = Executors.newCachedThreadPool();
         List<Callable<TreeSet<Integer>>> tasks = new ArrayList<>();
